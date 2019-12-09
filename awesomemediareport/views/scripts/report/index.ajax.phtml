@@ -28,14 +28,15 @@
                 <input id="like-button-<?php echo $entry->id; ?>" class="like" type="checkbox" <?php if ($entry->voted) echo 'checked'; ?>>
                 <label for="like-button-<?php echo $entry->id; ?>"></label>
                 <script>
-                    $('#like-button-<?php echo $entry->id; ?>').change(() => {
-                        if ($('#like-button-<?php echo $entry->id; ?>').prop('checked')) {
+                    var entryId = '<?php echo $entry->id; ?>';
+                    $(document).on('change', '#like-button-' + entryId, () => {
+                        if ($('#like-button-' + entryId).prop('checked')) {
                             action = 'like';
                         } else {
                             action = 'unlike';
                         }
-                        $.get('/awesomemediareport/report/' + action + '?entryId=<?php echo $entry->id; ?>&format=ajax', function() {
-                            $('#like-button-<?php echo $entry->id; ?>').prop('checked', !$('#like-button-<?php echo $entry->id; ?>').prop('checked'));
+                        $.get('/awesomemediareport/report/' + action + '?entryId=' + entryId + '&format=ajax', function() {
+                            $('#like-button-' + entryId).prop('checked', !$('#like-button-' + entryId).prop('checked'));
                         });
                     });
                 </script>
