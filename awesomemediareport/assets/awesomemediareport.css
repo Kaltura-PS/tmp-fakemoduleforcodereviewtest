@@ -1,0 +1,6 @@
+.like:checked + label:after {
+    content: "You liked";
+}
+.like:not(:checked) + label:after {
+    content: "You didn't like";
+}

@@ -1,0 +1,67 @@
+<?php $this->placeholder('entries')->captureStart('SET', 'entries'); ?>
+
+<?php /** @var Kaltura_Client_Type_MediaEntry $entry */ ?>
+<?php foreach ($this->entries as $entry): ?>
+    <tr>
+        <td><?php echo $entry->id; ?></td>
+        <td><?php echo $entry->name; ?></td>
+        <td><?php echo Kms_Resource_Models::getUser()->get($entry->creatorId)->fullName; ?></td>
+        <td>
+            <div class="categories-list-label">Channels:</div>
+            <ul class="categories-list">
+                <?php /** @var Kaltura_Client_Type_Category $channel */ ?>
+                <?php foreach ($entry->channels as $channel): ?>
+                    <li><a class="category-link" href="<?php echo "/category/view/$channel->fullName/$channel->id"; ?>"><?php echo $channel->name; ?></a></li>
+                <?php endforeach; ?>
+            </ul>
+            <div class="categories-list-label">Galleries:</div>
+            <ul class="categories-list">
+                <?php /** @var Kaltura_Client_Type_Category $gallery */ ?>
+                <?php foreach ($entry->galleries as $gallery): ?>
+                    <li><a class="category-link" title="<?php echo $gallery->fullName; ?>" href="<?php echo "/category/view/$gallery->fullName/$gallery->id"; ?>"><?php echo $gallery->name; ?></a></li>
+                <?php endforeach; ?>
+            </ul>
+        </td>
+        <td>
+            <div><?php echo $entry->votes . ' likes'; ?></div>
+            <div>
+                <input id="like-button-<?php echo $entry->id; ?>" class="like" type="checkbox" <?php if ($entry->voted) echo 'checked'; ?>>
+                <label for="like-button-<?php echo $entry->id; ?>"></label>
+                <script>
+                    $('#like-button-<?php echo $entry->id; ?>').change(() => {
+                        if ($('#like-button-<?php echo $entry->id; ?>').prop('checked')) {
+                            action = 'like';
+                        } else {
+                            action = 'unlike';
+                        }
+                        $.get('/awesomemediareport/report/' + action + '?entryId=<?php echo $entry->id; ?>&format=ajax', function() {
+                            $('#like-button-<?php echo $entry->id; ?>').prop('checked', !$('#like-button-<?php echo $entry->id; ?>').prop('checked'));
+                        });
+                    });
+                </script>
+            </div>
+        </td>
+    </tr>
+<?php endforeach; ?>
+
+<?php $this->placeholder('entries')->captureEnd(); ?>
+
+<?php $this->placeholder('pagination')->captureStart('SET', 'pagination'); ?>
+
+<?php echo $this->pagination(array('type' => 'ajax', 'baseUrl' => '/awesomemediareport/report?type=' . $this->type, 'currentPage' => $this->page, 'pagesCount' => $this->pagesCount)); ?>
+
+<?php $this->placeholder('pagination')->captureEnd(); ?>
+
+<?php
+
+$this->JsonContent(array(
+    'target' => '#entries',
+    'content' => $this->placeholder('entries')->entries,
+    'action' => 'replace'
+));
+
+$this->JsonContent(array(
+    'target' => '#pagination',
+    'content' => $this->placeholder('pagination')->pagination,
+    'action' => 'replace'
+));
