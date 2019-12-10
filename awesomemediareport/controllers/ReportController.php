@@ -116,7 +116,7 @@ class Awesomemediareport_ReportController extends Kms_Module_Controller_Abstract
      * @param $liked - Is liked
      */
     public function saveLikedToCache($entry, $liked) {
-        Kms_Resource_Cache::apiSet('awesomemediareport-entrylikedbycurrentuser', array('entryId' => $entry->id), $liked);
+        Kms_Resource_Cache::apiSet('awesomemediareport-entrylikedbycurentuser', array('entryId' => $entry->id), $liked);
     }
 
     /**

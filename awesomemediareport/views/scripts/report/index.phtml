@@ -1,6 +1,6 @@
 <h1><?php echo $this->translate('My Media Report'); ?></h1>
 <form method="get">
-    <select name="type" onchange="(this).parent().submit();">
+    <select name="type" onchange="$(this).parent().submit();">
         <option value="video" <?php if ($this->type == 'video') echo 'selected'; ?>>Video</option>
         <option value="audio" <?php if ($this->type == 'audio') echo 'selected'; ?>>Audio</option>
         <option value="live" <?php if ($this->type == 'live') echo 'selected'; ?>>Live</option>
