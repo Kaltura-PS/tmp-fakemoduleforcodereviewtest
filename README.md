@@ -22,5 +22,5 @@ The table should have the following columns:
 
 The table should have pagination.
 
-The user should be able to peek media type to display in the report - the filter should be above the table.
+The user should be able to pick media type to display in the report - the filter should be above the table.
 The options should be "Video" (pre-selected), "Audio", "Live", "Image".
