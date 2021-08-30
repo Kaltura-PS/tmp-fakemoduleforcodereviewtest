@@ -1,0 +1,67 @@
+<h1><?php echo $this->translate('My Media Report'); ?></h1>
+<form method="get">
+    <select name="type" onchange="$(this).parent().submit();">
+        <option value="video" <?php if ($this->type == 'video') echo 'selected'; ?>>Video</option>
+        <option value="audio" <?php if ($this->type == 'audio') echo 'selected'; ?>>Audio</option>
+        <option value="live" <?php if ($this->type == 'live') echo 'selected'; ?>>Live</option>
+        <option value="image" <?php if ($this->type == 'image') echo 'selected'; ?>>Image</option>
+    </select>
+</form>
+<table class="entries-table">
+    <thead>
+    <tr>
+        <th><?php echo $this->translate('ID'); ?></th>
+        <th><?php echo $this->translate('Name'); ?></th>
+        <th><?php echo $this->translate('Creator'); ?></th>
+        <th><?php echo $this->translate('Published In'); ?></th>
+        <th><?php echo $this->translate('Likes'); ?></th>
+    </tr>
+    </thead>
+    <tbody id="entries">
+    <?php /** @var Kaltura_Client_Type_BaseEntry $entry */ ?>
+    <?php foreach ($this->entries as $entry): ?>
+        <tr>
+            <td><?php echo $entry->id; ?></td>
+            <td><?php echo $entry->name; ?></td>
+            <td><?php echo Kms_Resource_Models::getUser()->get($entry->creatorId)->fullName; ?></td>
+            <td>
+                <div class="categories-list-label">Channels:</div>
+                <ul class="categories-list">
+                    <?php /** @var Kaltura_Client_Type_Category $channel */ ?>
+                    <?php foreach ($entry->channels as $channel): ?>
+                        <li><a class="category-link" href="<?php echo "/category/view/$channel->fullName/$channel->id"; ?>"><?php echo $channel->name; ?></a></li>
+                    <?php endforeach; ?>
+                </ul>
+                <div class="categories-list-label">Galleries:</div>
+                <ul class="categories-list">
+                    <?php /** @var Kaltura_Client_Type_Category $gallery */ ?>
+                    <?php foreach ($entry->galleries as $gallery): ?>
+                        <li><a class="category-link" title="<?php echo $gallery->fullName; ?>" href="<?php echo "/category/view/$gallery->fullName/$gallery->id"; ?>"><?php echo $gallery->name; ?></a></li>
+                    <?php endforeach; ?>
+                </ul>
+            </td>
+            <td>
+                <div><?php echo $entry->votes . ' likes'; ?></div>
+                <div>
+                    <input id="like-button-<?php echo $entry->id; ?>" class="like" type="checkbox" <?php if ($entry->voted) echo 'checked'; ?>>
+                    <label for="like-button-<?php echo $entry->id; ?>"></label>
+                    <script>
+                        var entryId = '<?php echo $entry->id; ?>';
+                        $(document).on('change', '#like-button-' + entryId, () => {
+                            if ($('#like-button-' + entryId).prop('checked')) {
+                                action = 'like';
+                            } else {
+                                action = 'unlike';
+                            }
+                            $.get('/awesomemediareport/report/' + action + '?entryId=' + entryId + '&format=ajax', function() {
+                                $('#like-button-' + entryId).prop('checked', !$('#like-button-' + entryId).prop('checked'));
+                            });
+                        });
+                    </script>
+                </div>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+<div id="pagination"><?php echo $this->pagination(array('type' => 'ajax', 'baseUrl' => '/awesomemediareport/report?type=' . $this->type, 'currentPage' => 1, 'pagesCount' => $this->pagesCount)); ?></div>
